@@ -46,7 +46,7 @@ public class ConferenceApi {
 
     // TODO 1 Pass the ProfileForm parameter
     // TODO 2 Pass the User parameter
-    public Profile saveProfile() throws UnauthorizedException {
+    public Profile saveProfile(final User user, ProfileForm profileForm) throws UnauthorizedException {
 
         String userId = null;
         String mainEmail = null;
@@ -55,22 +55,33 @@ public class ConferenceApi {
 
         // TODO 2
         // If the user is not logged in, throw an UnauthorizedException
-
+        if (user == null){
+            throw new UnauthorizedException("Authorization required");
+        }
 
         // TODO 1
         // Set the teeShirtSize to the value sent by the ProfileForm, if sent
         // otherwise leave it as the default value
+        displayName = profileForm.getDisplayName();
 
         // TODO 1
         // Set the displayName to the value sent by the ProfileForm, if sent
         // otherwise set it to null
+        if(profileForm.getTeeShirtSize() != null){
+            teeShirtSize = profileForm.getTeeShirtSize();
+        }
 
         // TODO 2
         // Get the userId and mainEmail
+        mainEmail = user.getEmail();
+        userId = user.getUserId();
 
         // TODO 2
         // If the displayName is null, set it to default value based on the user's email
         // by calling extractDefaultDisplayNameFromEmail(...)
+        if (displayName == null){
+            displayName = extractDefaultDisplayNameFromEmail(user.getEmail());
+        }
 
         // Create a new Profile entity from the
         // userId, displayName, mainEmail and teeShirtSize
@@ -78,9 +89,13 @@ public class ConferenceApi {
 
         // TODO 3 (In Lesson 3)
         // Save the Profile entity in the datastore
-
+        //OfyService.ofy().save().entities(profile).now();
         // Return the profile
         return profile;
+
+
+
+
     }
 
     /**
