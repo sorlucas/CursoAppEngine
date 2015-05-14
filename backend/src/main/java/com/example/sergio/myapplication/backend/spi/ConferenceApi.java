@@ -54,47 +54,44 @@ public class ConferenceApi {
 
     public Profile saveProfile(final User user, ProfileForm profileForm) throws UnauthorizedException {
 
-        String userId = null;
-        String mainEmail = null;
-        String displayName = "Your name will go here";
-        ProfileForm.TeeShirtSize teeShirtSize = ProfileForm.TeeShirtSize.NOT_SPECIFIED;
-
-
         // If the user is not logged in, throw an UnauthorizedException
         if (user == null){
             throw new UnauthorizedException("Authorization required");
         }
 
-
-        // Set the teeShirtSize to the value sent by the ProfileForm, if sent
-        // otherwise leave it as the default value
-        displayName = profileForm.getDisplayName();
-
-
-        // Set the displayName to the value sent by the ProfileForm, if sent
-        // otherwise set it to null
-        if(profileForm.getTeeShirtSize() != null){
-            teeShirtSize = profileForm.getTeeShirtSize();
-        }
-
-
         // Get the userId and mainEmail
-        mainEmail = user.getEmail();
-        userId = user.getUserId();
+        String userId = user.getUserId();
+        String mainEmail = user.getEmail();
 
+        // Get the displayName and teeShirtSize sent by the request
+        String displayName = profileForm.getDisplayName();
+        ProfileForm.TeeShirtSize teeShirtSize = profileForm.getTeeShirtSize();
 
-        // If the displayName is null, set it to default value based on the user's email
-        // by calling extractDefaultDisplayNameFromEmail(...)
-        if (displayName == null){
-            displayName = extractDefaultDisplayNameFromEmail(user.getEmail());
+        //Get the Profile from the datastore if it exists otherwise create a new one
+        Profile profile = ofy().load().key(Key.create(Profile.class,userId))
+                .now();
+
+        if (profile == null){
+            // If the displayName is null, set it to default value based on the user's email
+            // by calling extractDefaultDisplayNameFromEmail(...)
+            if (displayName == null){
+                displayName = extractDefaultDisplayNameFromEmail(user.getEmail());
+            }
+
+            if (teeShirtSize == null){
+                teeShirtSize = ProfileForm.TeeShirtSize.NOT_SPECIFIED;
+            }
+
+            // Now create a new Profile entity
+            profile = new Profile(userId, displayName, mainEmail, teeShirtSize);
+        } else {
+            //The Profile entity already exists. Update the Profile entity
+            profile.update(displayName, teeShirtSize);
         }
 
-        // Create a new Profile entity from the
-        // userId, displayName, mainEmail and teeShirtSize
-        Profile profile = new Profile(userId, displayName, mainEmail, teeShirtSize);
+        //Save the entity in the datastore
+        ofy().save().entity(profile).now();
 
-        // Save the Profile entity in the datastore
-        ofy().save().entities(profile).now();
         // Return the profile
         return profile;
 

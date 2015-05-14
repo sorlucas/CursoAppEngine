@@ -51,4 +51,19 @@ public class Profile {
      */
     private Profile() {}
 
+    /**
+     * Update the Profile with the given displayName and teeShirtSize
+     *
+     * @param displayName
+     * @param teeShirtSize
+     */
+    public void update(String displayName, ProfileForm.TeeShirtSize teeShirtSize){
+        if(displayName != null){
+            this.displayName = displayName;
+        }
+        if (teeShirtSize != null){
+            this.teeShirtSize = teeShirtSize;
+        }
+    }
+
 }

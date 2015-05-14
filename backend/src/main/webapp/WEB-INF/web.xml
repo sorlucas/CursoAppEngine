@@ -13,8 +13,7 @@
         <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
         <init-param>
             <param-name>services</param-name>
-            <param-value>com.example.sergio.myapplication.backend.spi.ConferenceApi,
-                com.example.sergio.myapplication.backend.domain.ProfileEndpoint</param-value>
+            <param-value>com.example.sergio.myapplication.backend.spi.ConferenceApi</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>
