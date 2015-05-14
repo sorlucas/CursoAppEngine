@@ -10,6 +10,9 @@ import com.google.api.server.spi.config.ApiMethod.HttpMethod;
 import com.google.api.server.spi.response.UnauthorizedException;
 import com.google.appengine.api.users.User;
 import com.googlecode.objectify.Key;
+import com.googlecode.objectify.ObjectifyService;
+
+import static com.googlecode.objectify.ObjectifyService.ofy;
 
 /**
  * Defines conference APIs.
@@ -17,6 +20,11 @@ import com.googlecode.objectify.Key;
 @Api(name = "conference", version = "v1", scopes = { Constants.EMAIL_SCOPE }, clientIds = {
         Constants.WEB_CLIENT_ID, Constants.API_EXPLORER_CLIENT_ID }, description = "API for the Conference Central Backend application.")
 public class ConferenceApi {
+
+    static {
+        // Typically you would register this inside an OfyServive wrapper. See: https://code.google.com/p/objectify-appengine/wiki/BestPractices
+        ObjectifyService.register(Profile.class);
+    }
 
     /*
      * Get the display name from the user's email. For example, if the email is
@@ -44,8 +52,6 @@ public class ConferenceApi {
     // The request that invokes this method should provide data that
     // conforms to the fields defined in ProfileForm
 
-    // TODO 1 Pass the ProfileForm parameter
-    // TODO 2 Pass the User parameter
     public Profile saveProfile(final User user, ProfileForm profileForm) throws UnauthorizedException {
 
         String userId = null;
@@ -53,30 +59,30 @@ public class ConferenceApi {
         String displayName = "Your name will go here";
         ProfileForm.TeeShirtSize teeShirtSize = ProfileForm.TeeShirtSize.NOT_SPECIFIED;
 
-        // TODO 2
+
         // If the user is not logged in, throw an UnauthorizedException
         if (user == null){
             throw new UnauthorizedException("Authorization required");
         }
 
-        // TODO 1
+
         // Set the teeShirtSize to the value sent by the ProfileForm, if sent
         // otherwise leave it as the default value
         displayName = profileForm.getDisplayName();
 
-        // TODO 1
+
         // Set the displayName to the value sent by the ProfileForm, if sent
         // otherwise set it to null
         if(profileForm.getTeeShirtSize() != null){
             teeShirtSize = profileForm.getTeeShirtSize();
         }
 
-        // TODO 2
+
         // Get the userId and mainEmail
         mainEmail = user.getEmail();
         userId = user.getUserId();
 
-        // TODO 2
+
         // If the displayName is null, set it to default value based on the user's email
         // by calling extractDefaultDisplayNameFromEmail(...)
         if (displayName == null){
@@ -87,9 +93,8 @@ public class ConferenceApi {
         // userId, displayName, mainEmail and teeShirtSize
         Profile profile = new Profile(userId, displayName, mainEmail, teeShirtSize);
 
-        // TODO 3 (In Lesson 3)
         // Save the Profile entity in the datastore
-        //OfyService.ofy().save().entities(profile).now();
+        ofy().save().entities(profile).now();
         // Return the profile
         return profile;
 
@@ -114,11 +119,10 @@ public class ConferenceApi {
             throw new UnauthorizedException("Authorization required");
         }
 
-        // TODO
         // load the Profile Entity
-        String userId = ""; // TODO
-        Key key = null; // TODO
-        Profile profile = null; // TODO load the Profile entity
+        String userId = user.getUserId();
+        Key key = Key.create(Profile.class,userId);
+        Profile profile = (Profile) ofy().load().key(key).now();
         return profile;
     }
 }

@@ -2,15 +2,17 @@ package com.example.sergio.myapplication.backend.domain;
 
 
 import com.example.sergio.myapplication.backend.form.ProfileForm;
+import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
 
 
-// TODO indicate that this class is an Entity
+@Entity
 public class Profile {
     String displayName;
     String mainEmail;
     ProfileForm.TeeShirtSize teeShirtSize;
 
-    // TODO indicate that the userId is to be used in the Entity's key
+    @Id
     String userId;
 
     /**
