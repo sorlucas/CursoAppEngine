@@ -12,6 +12,9 @@ import com.google.api.server.spi.config.ApiMethod.HttpMethod;
 import com.google.api.server.spi.response.UnauthorizedException;
 import com.google.appengine.api.users.User;
 import com.googlecode.objectify.Key;
+import com.googlecode.objectify.cmd.Query;
+
+import java.util.List;
 
 import static com.example.sergio.myapplication.backend.services.OfyService.factory;
 import static com.example.sergio.myapplication.backend.services.OfyService.ofy;
@@ -170,5 +173,15 @@ public class ConferenceApi {
         ofy().save().entities(profile,conference);
 
         return conference;
+    }
+
+    @ApiMethod(
+            name = "queryConferences",
+            path = "queryConferences",
+            httpMethod = HttpMethod.POST
+    )
+    public List<Conference> queryConferences() {
+        Query query = ofy().load().type(Conference.class).order("name");
+        return query.list();
     }
 }
