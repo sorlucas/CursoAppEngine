@@ -6,7 +6,7 @@ import com.google.api.server.spi.Constant;
  * Contains the client IDs and scopes for allowed clients consuming the conference API.
  */
 public class Constants {
-    public static final String WEB_CLIENT_ID = "119688308642-qirn1pm51pejmjs5g2d83rja6los9o9s.apps.googleusercontent.com";
+    public static final String WEB_CLIENT_ID = "1019255300781-3j5ethd8n7i9bnms22h3cudh7aeffviv.apps.googleusercontent.com";
     public static final String ANDROID_CLIENT_ID = "replace this with your Android client ID";
     public static final String IOS_CLIENT_ID = "replace this with your iOS client ID";
     public static final String ANDROID_AUDIENCE = WEB_CLIENT_ID;
