@@ -6,6 +6,7 @@ import com.example.sergio.myapplication.backend.domain.AppEngineUser;
 import com.example.sergio.myapplication.backend.domain.Conference;
 import com.example.sergio.myapplication.backend.domain.Profile;
 import com.example.sergio.myapplication.backend.form.ConferenceForm;
+import com.example.sergio.myapplication.backend.form.ConferenceQueryForm;
 import com.example.sergio.myapplication.backend.form.ProfileForm;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
@@ -20,6 +21,7 @@ import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.Work;
 import com.googlecode.objectify.cmd.Query;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -180,9 +182,21 @@ public class ConferenceApi {
             path = "queryConferences",
             httpMethod = HttpMethod.POST
     )
-    public List<Conference> queryConferences() {
-        Query query = ofy().load().type(Conference.class).order("name");
-        return query.list();
+    public List<Conference> queryConferences(ConferenceQueryForm conferenceQueryForm) {
+
+        Iterable<Conference> conferenceIterable = conferenceQueryForm.getQuery();
+        List<Conference> result = new ArrayList<>(0);
+        List<Key<Profile>> organizersKeyList = new ArrayList<>(0);
+
+        for (Conference conference : conferenceIterable) {
+            organizersKeyList.add(Key.create(Profile.class, conference.getOrganizerUserId()));
+            result.add(conference);
+        }
+
+        // To avoid separate datastore gets for each Conference, pre-fetch the Profiles.
+        ofy().load().keys(organizersKeyList);
+        return result;
+
     }
 
     @ApiMethod(
@@ -209,9 +223,10 @@ public class ConferenceApi {
             httpMethod = HttpMethod.POST
     )
     public List<Conference> filterPlayground(){
-        Query query = ofy().load().type(Conference.class).order("name");
+        Query query = ofy().load().type(Conference.class);
         query = query.filter("city =", "London");
         query = query.filter("topics =", "Medical Innovations");
+        query = query.filter("maxAttendees >", 10).order("maxAttendees").order("name");
 
         return query.list();
     }
