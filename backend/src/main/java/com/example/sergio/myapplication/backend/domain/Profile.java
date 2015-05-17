@@ -3,6 +3,7 @@ package com.example.sergio.myapplication.backend.domain;
 
 import com.example.sergio.myapplication.backend.form.ProfileForm;
 import com.google.common.collect.ImmutableList;
+import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 
@@ -11,6 +12,7 @@ import java.util.List;
 
 
 @Entity
+@Cache
 public class Profile {
     String displayName;
     String mainEmail;

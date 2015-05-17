@@ -6,6 +6,7 @@ import com.google.api.server.spi.config.ApiResourceProperty;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.googlecode.objectify.Key;
+import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
@@ -22,6 +23,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
  * Conference class stores conference information.
  */
 @Entity
+@Cache
 public class Conference {
 
     private static final String DEFAULT_CITY = "Default City";
