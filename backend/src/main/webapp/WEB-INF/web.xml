@@ -34,4 +34,27 @@
             <transport-guarantee>CONFIDENTIAL</transport-guarantee>
         </user-data-constraint>
     </security-constraint>
+
+    <!--     Servlet para los announcements    -->
+    <servlet>
+        <servlet-name>SetAnnouncementServlet</servlet-name>
+        <servlet-class>
+            com.example.sergio.myapplication.backend.servlet.SetAnnouncementServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>SetAnnouncementServlet</servlet-name>
+        <url-pattern>/crons/set_announcement</url-pattern>
+    </servlet-mapping>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>crons</web-resource-name>
+            <url-pattern>/crons/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+        </auth-constraint>
+    </security-constraint>
 </web-app>

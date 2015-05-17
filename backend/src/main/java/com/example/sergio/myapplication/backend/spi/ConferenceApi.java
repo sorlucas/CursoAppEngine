@@ -2,6 +2,7 @@ package com.example.sergio.myapplication.backend.spi;
 
 
 import com.example.sergio.myapplication.backend.Constants;
+import com.example.sergio.myapplication.backend.domain.Announcement;
 import com.example.sergio.myapplication.backend.domain.AppEngineUser;
 import com.example.sergio.myapplication.backend.domain.Conference;
 import com.example.sergio.myapplication.backend.domain.Profile;
@@ -16,6 +17,8 @@ import com.google.api.server.spi.response.ConflictException;
 import com.google.api.server.spi.response.ForbiddenException;
 import com.google.api.server.spi.response.NotFoundException;
 import com.google.api.server.spi.response.UnauthorizedException;
+import com.google.appengine.api.memcache.MemcacheService;
+import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
@@ -463,5 +466,19 @@ public class ConferenceApi {
             keysToAttend.add(Key.<Conference>create(keyString));
         }
         return ofy().load().keys(keysToAttend).values();
+    }
+
+    @ApiMethod(
+            name = "getAnnouncement",
+            path = "announcement",
+            httpMethod = HttpMethod.GET
+    )
+    public Announcement getAnnouncement() {
+        MemcacheService memcacheService = MemcacheServiceFactory.getMemcacheService();
+        Object message = memcacheService.get(Constants.MEMCACHE_ANNOUNCEMENTS_KEY);
+        if (message != null) {
+            return new Announcement(message.toString());
+        }
+        return null;
     }
 }
